@@ -1,4 +1,9 @@
 <?php
+/**
+ * Admin Login Page
+ * Access: yoursite.com/admin/login.php
+ * Default credentials: admin / admin123
+ */
 require_once '../config.php';
 
 // If already logged in, redirect to dashboard
@@ -7,21 +12,14 @@ if (isAdminLoggedIn()) {
 }
 
 $error = '';
-$debugInfo = [];
 
 // Handle login form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     
-    // DEBUG: Store what we're checking
-    $debugInfo[] = "Username entered: " . $username;
-    $debugInfo[] = "Password entered: " . $password;
-    $debugInfo[] = "Password length: " . strlen($password);
-    
     if (empty($username) || empty($password)) {
         $error = 'Please enter both username and password.';
-        $debugInfo[] = "ERROR: Empty username or password";
     } else {
         // Check credentials
         $stmt = $pdo->prepare("
@@ -31,27 +29,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ");
         $stmt->execute([$username]);
         $admin = $stmt->fetch();
-        
-        // DEBUG: Check if user was found
-        if (!$admin) {
-            $debugInfo[] = "ERROR: Username '$username' not found in database";
-            
-            // Show all usernames in database
-            $allUsers = $pdo->query("SELECT username FROM admin_users")->fetchAll();
-            $debugInfo[] = "Available usernames: " . json_encode(array_column($allUsers, 'username'));
-        } else {
-            $debugInfo[] = "✓ User found in database";
-            $debugInfo[] = "Username from DB: " . $admin['username'];
-            $debugInfo[] = "Password hash from DB: " . substr($admin['password'], 0, 20) . "...";
-            
-            // Test password verification
-            $passwordVerify = password_verify($password, $admin['password']);
-            $debugInfo[] = "Password verify result: " . ($passwordVerify ? 'TRUE' : 'FALSE');
-            
-            // Try manual check
-            $manualCheck = ($admin['password'] === '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
-            $debugInfo[] = "Password hash matches expected: " . ($manualCheck ? 'TRUE' : 'FALSE');
-        }
         
         if ($admin && password_verify($password, $admin['password'])) {
             // Login successful
@@ -71,7 +48,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect('index.php');
         } else {
             $error = 'Invalid username or password.';
-            $debugInfo[] = "ERROR: Authentication failed";
+            
+            // Log failed attempt
+            $ip = $_SERVER['REMOTE_ADDR'];
+            $stmt = $pdo->prepare("
+                INSERT INTO activity_log (admin_id, action, description, ip_address) 
+                VALUES (NULL, 'login_failed', ?, ?)
+            ");
+            $stmt->execute(["Failed login attempt for username: $username", $ip]);
         }
     }
 }
@@ -154,27 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 1.5rem;
             font-size: 0.9rem;
             border-left: 4px solid #c33;
-        }
-        
-        .debug-box {
-            background: #f0f0f0;
-            border: 2px solid #ccc;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1.5rem;
-            font-size: 0.85rem;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        
-        .debug-box h3 {
-            color: #264d2a;
-            margin-bottom: 0.5rem;
-        }
-        
-        .debug-box pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
         }
         
         .form-group {
@@ -267,14 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         
         <?php if ($error): ?>
-            <div class="error-message"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-        
-        <?php if (!empty($debugInfo)): ?>
-            <div class="debug-box">
-                <h3>🔍 Debug Information:</h3>
-                <pre><?php foreach($debugInfo as $info) echo $info . "\n"; ?></pre>
-            </div>
+            <div class="error-message"><?= e($error) ?></div>
         <?php endif; ?>
         
         <form method="POST" action="">
@@ -284,7 +240,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     type="text" 
                     id="username" 
                     name="username" 
-                    value="admin"
                     required 
                     autofocus
                     autocomplete="username"
@@ -297,7 +252,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     type="password" 
                     id="password" 
                     name="password" 
-                    value="admin123"
                     required
                     autocomplete="current-password"
                 >
@@ -313,7 +267,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="info-box">
             <strong>🔐 Default Login Credentials:</strong>
             Username: <strong>admin</strong><br>
-            Password: <strong>admin123</strong>
+            Password: <strong>password</strong>
         </div>
     </div>
 </body>
