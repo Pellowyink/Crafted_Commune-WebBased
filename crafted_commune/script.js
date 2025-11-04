@@ -17,13 +17,15 @@ let currentPage = 'home';
 const pages = {
     home: document.getElementById('homePage'),
     menu: document.getElementById('menuPage'),
-    about: document.getElementById('aboutPage')
+    about: document.getElementById('aboutPage'),
+    contact: document.getElementById('contactPage')
 };
 
 const navButtons = {
     home: document.getElementById('homeBtn'),
     menu: document.getElementById('menuBtn'),
-    about: document.getElementById('aboutBtn')
+    about: document.getElementById('aboutBtn'),
+    contact: document.getElementById('contactBtn')
 };
 
 const productGrid = document.getElementById('productGrid');
@@ -78,6 +80,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // PAGE NAVIGATION
 // ========================================
 function showPage(pageName) {
+    console.log('Switching to page:', pageName); // DEBUG
+    
     // Hide all pages
     Object.values(pages).forEach(page => {
         if (page) page.classList.remove('active');
@@ -91,6 +95,9 @@ function showPage(pageName) {
     // Show selected page
     if (pages[pageName]) {
         pages[pageName].classList.add('active');
+        console.log('Showing page:', pageName); // DEBUG
+    } else {
+        console.error('Page not found:', pageName); // DEBUG
     }
     
     // Activate corresponding nav button
