@@ -178,7 +178,7 @@ try {
                 <?php 
                 $isFirst = true;
                 foreach($menuItems as $slug => $category): 
-                    $emojis = ['coffee' => '☕', 'latte' => '🥛', 'soda' => '🥤', 'snacks' => '🍪'];
+                    $emojis = ['coffee' => '☕','non-coffee' => '🍵', 'latte' => '🧉','breakfast' => '🥞','lunch' => '🍚', 'soda' => '🥤', 'snacks' => '🍪'];
                     $emoji = $emojis[$slug] ?? '📁';
                 ?>
                 <a href="#" class="menu-item <?php echo $isFirst ? 'active' : ''; ?>" data-category="<?php echo htmlspecialchars($slug); ?>">

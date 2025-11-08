@@ -1,5 +1,6 @@
 -- ========================================
 -- Crafted Commune Café - Database Schema
+-- (Updated with Title Case Product Names)
 -- ========================================
 
 -- Create Database
@@ -38,15 +39,17 @@ CREATE TABLE IF NOT EXISTS categories (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert default categories
+-- Insert categories from the menu
 INSERT INTO categories (name, slug, icon, display_order) VALUES
 ('Coffee', 'coffee', 'images/icons/coffee-icon.png', 1),
-('Latte', 'latte', 'images/icons/latte-icon.png', 2),
-('Soda', 'soda', 'images/icons/soda-icon.png', 3),
-('Snacks', 'snacks', 'images/icons/snacks-icon.png', 4);
+('Non-Coffee', 'non-coffee', 'images/icons/non-coffee-icon.png', 2),
+('Breakfast', 'breakfast', 'images/icons/breakfast-icon.png', 3),
+('Snacks', 'snacks', 'images/icons/snacks-icon.png', 4),
+('Lunch', 'lunch', 'images/icons/lunch-icon.png', 5);
 
 -- ========================================
 -- Products Table
+-- Inserted with full menu data (Title Case Names)
 -- ========================================
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -63,31 +66,60 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
--- Insert sample products
+-- Insert the full Crafted Commune menu products with Title Case names
 INSERT INTO products (category_id, name, price, points, image, is_recommended) VALUES
--- Coffee
-(1, 'Americano', 90, 9, 'images/americano.jpg', 0),
-(1, 'Cappuccino', 100, 10, 'images/cappuccino.jpg', 0),
-(1, 'Caffè Latte', 100, 10, 'images/caffelatte.jpg', 0),
-(1, 'Espressoyna', 130, 13, 'images/espressoyna.jpg', 0),
-(1, 'Manual Brew', 180, 18, 'images/manualbrew.jpg', 1),
--- Latte
-(2, 'Classic Latte', 95, 10, 'images/classiclatte.jpg', 0),
-(2, 'Caramel Latte', 120, 12, 'images/caramellatte.jpg', 1),
-(2, 'Vanilla Latte', 115, 12, 'images/vanillalatte.jpg', 0),
-(2, 'Mocha Latte', 125, 13, 'images/mochalatte.jpg', 0),
--- Soda
-(3, 'Cola', 60, 6, 'images/cola.jpg', 0),
-(3, 'Lemon Soda', 65, 7, 'images/lemonsoda.jpg', 1),
-(3, 'Orange Fizz', 70, 7, 'images/orangefizz.jpg', 0),
-(3, 'Root Beer', 60, 6, 'images/rootbeer.jpg', 0),
--- Snacks
-(4, 'Croissant', 80, 8, 'images/croissant.jpg', 0),
-(4, 'Muffin', 75, 8, 'images/muffin.jpg', 1),
-(4, 'Cookie', 50, 5, 'images/cookie.jpg', 0),
-(4, 'Brownie', 90, 9, 'images/brownie.jpg', 0),
-(4, 'Donut', 50, 5, 'images/donut.jpg', 0),
-(4, 'Bagel', 85, 9, 'images/bagel.jpg', 0);
+
+-- Category 1: Coffee
+(1, 'Americano', 90.00, 9, 'images/americano.jpg', 0),
+(1, 'Cappuccino', 100.00, 10, 'images/cappuccino.jpg', 0),
+(1, 'Caffe Latte', 100.00, 10, 'images/caffelatte.jpg', 0),
+(1, 'Crafted Coffee', 120.00, 12, 'images/crafted_coffee.jpg', 1),
+(1, 'Trapped Souls Latte', 120.00, 12, 'images/trapped_souls_latte.jpg', 1),
+(1, 'Chocnut Latte', 120.00, 12, 'images/chocnut_latte.jpg', 0),
+(1, 'Spanish Latte', 120.00, 12, 'images/spanish_latte.jpg', 0),
+(1, 'Vanilla Latte', 120.00, 12, 'images/vanilla_latte.jpg', 0),
+(1, 'Caramel Latte', 120.00, 12, 'images/caramel_latte.jpg', 0),
+(1, 'Caffe Mocha', 120.00, 12, 'images/caffe_mocha.jpg', 0),
+(1, 'Biscoff Latte', 140.00, 14, 'images/biscoff_latte.jpg', 0),
+(1, 'Peanut Butter Latte', 130.00, 13, 'images/peanut_butter_latte.jpg', 0),
+(1, 'Coffee Cream Soda', 120.00, 12, 'images/coffee_cream_soda.jpg', 0),
+(1, 'Royal Coffee', 100.00, 10, 'images/royal_coffee.jpg', 0),
+(1, 'Soy Latte', 130.00, 13, 'images/soy_latte.jpg', 0),
+(1, 'Espressoynanana', 130.00, 13, 'images/espressoynanana.jpg', 0),
+(1, 'Panutsa Oat Latte', 150.00, 15, 'images/panutsa_oat_latte.jpg', 1),
+(1, 'Manual Brew', 180.00, 18, 'images/manual_brew.jpg', 0),
+
+-- Category 2: Non-Coffee
+(2, 'Artisan\'s Chocolate', 120.00, 12, 'images/artisans_chocolate.jpg', 1),
+(2, 'Chocomini', 120.00, 12, 'images/chocomini.jpg', 0),
+(2, 'Black Forest', 120.00, 12, 'images/black_forest.jpg', 0),
+(2, 'Matcha', 140.00, 14, 'images/matcha.jpg', 0),
+(2, 'Earl Grey Matcha', 140.00, 14, 'images/earl_grey_matcha.jpg', 0),
+(2, 'Strawberry Matcha', 160.00, 16, 'images/strawberry_matcha.jpg', 0),
+(2, 'Crafted Matcha', 160.00, 16, 'images/crafted_matcha.jpg', 0),
+(2, 'Cloud Matchanana', 180.00, 18, 'images/cloud_matchanana.jpg', 1),
+(2, 'Fruit Latte', 100.00, 10, 'images/fruit_latte.jpg', 0),
+(2, 'Jam Fizz', 100.00, 10, 'images/jam_fizz.jpg', 0),
+(2, 'Crafted Butter Beer', 120.00, 12, 'images/crafted_butter_beer.jpg', 1),
+(2, 'Loose Tea', 100.00, 10, 'images/loose_tea.jpg', 0),
+(2, 'Peach Jasmine Tea', 100.00, 10, 'images/peach_jasmine_tea.jpg', 1),
+(2, 'Strawberry Hibiscus Tea', 100.00, 10, 'images/strawberry_hibiscus_tea.jpg', 0),
+(2, 'Chocolate Earl', 100.00, 10, 'images/chocolate_earl.jpg', 0),
+
+-- Category 3: Breakfast
+(3, 'Plain Waffle', 100.00, 10, 'images/plain_waffle.jpg', 0),
+(3, 'Croffle', 140.00, 14, 'images/croffle.jpg', 0),
+(3, 'French\'s Toast', 80.00, 8, 'images/frenchs_toast.jpg', 0),
+(3, 'Big Breakfast', 250.00, 25, 'images/big_breakfast.jpg', 1),
+
+-- Category 4: Snacks
+(4, 'Nachos', 150.00, 15, 'images/nachos.jpg', 0),
+(4, 'Fries', 120.00, 12, 'images/fries.jpg', 0),
+(4, 'Hungarian Sausage', 80.00, 8, 'images/hungarian_sausage.jpg', 0),
+(4, 'Sriracha Egg Sammie', 80.00, 8, 'images/sriracha_egg_sammie.jpg', 0),
+
+-- Category 5: Lunch
+(5, 'Lunch Bowl', 80.00, 8, 'images/lunch_bowl.jpg', 0);
 
 -- ========================================
 -- Orders Table
@@ -189,7 +221,7 @@ SELECT
 FROM products p
 LEFT JOIN order_items oi ON p.id = oi.product_id
 LEFT JOIN categories c ON p.category_id = c.id
-GROUP BY p.id
+GROUP BY p.id, p.name, c.name, p.price, p.is_recommended
 ORDER BY total_quantity_sold DESC;
 
 -- View: Daily Sales Summary
@@ -217,7 +249,7 @@ SELECT
 FROM categories c
 LEFT JOIN products p ON c.id = p.category_id
 LEFT JOIN order_items oi ON p.id = oi.product_id
-GROUP BY c.id
+GROUP BY c.id, c.name
 ORDER BY total_revenue DESC;
 
 -- ========================================
