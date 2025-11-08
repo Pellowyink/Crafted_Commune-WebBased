@@ -108,7 +108,7 @@ try {
         <div class="nav-container">
             <button class="nav-btn" onclick="showPage('home')" id="homeBtn">Home</button>
             <button class="nav-btn" onclick="showPage('menu')" id="menuBtn">Menu</button>
-            <div class="logo">☕</div>
+            <div class="logo"><img src="../images/icons/logo.jpg" alt=""></div>
             <button class="nav-btn" onclick="showPage('about')" id="aboutBtn">About Us</button>
             <button class="nav-btn" onclick="showPage('contact')" id="contactBtn">Contact</button>
         </div>
@@ -123,22 +123,22 @@ try {
         </header>
 
         <section class="carousel-section">
-            <h2 class="section-title">Featured Products</h2>
+            <h2 class="section-title">Discover Our Story</h2>
             <div class="carousel-container">
                 <button class="carousel-btn prev" id="prevBtn">‹</button>
                 <div class="carousel-wrapper">
                     <div class="carousel-track" id="carouselTrack">
                         <div class="carousel-slide">
-                            <img src="images/carousel/slide1.jpg" alt="Featured Product 1" onerror="this.src='https://via.placeholder.com/800x400/264d2a/ffffff?text=Product+1'">
+                            <img src="../images/carousel/slide1.jpg" alt="Featured Product 1" onerror="this.src='https://via.placeholder.com/800x400/264d2a/ffffff?text=Product+1'">
                         </div>
                         <div class="carousel-slide">
-                            <img src="images/carousel/slide2.jpg" alt="Featured Product 2" onerror="this.src='https://via.placeholder.com/800x400/3d5a3d/ffffff?text=Product+2'">
+                            <img src="../images/carousel/slide2.jpg" alt="Featured Product 2" onerror="this.src='https://via.placeholder.com/800x400/3d5a3d/ffffff?text=Product+2'">
                         </div>
                         <div class="carousel-slide">
-                            <img src="images/carousel/slide3.jpg" alt="Featured Product 3" onerror="this.src='https://via.placeholder.com/800x400/264d2a/ffffff?text=Product+3'">
+                            <img src="../images/carousel/slide3.jpg" alt="Featured Product 3" onerror="this.src='https://via.placeholder.com/800x400/264d2a/ffffff?text=Product+3'">
                         </div>
                         <div class="carousel-slide">
-                            <img src="images/carousel/slide4.jpg" alt="Featured Product 4" onerror="this.src='https://via.placeholder.com/800x400/3d5a3d/ffffff?text=Product+4'">
+                            <img src="../images/carousel/slide4.jpg" alt="Featured Product 4" onerror="this.src='https://via.placeholder.com/800x400/3d5a3d/ffffff?text=Product+4'">
                         </div>
                     </div>
                 </div>
@@ -280,8 +280,8 @@ try {
                         <h3>🏪 Crafted Commune Café</h3>
                         <p><strong>Address:</strong><br>
                         <!-- EDIT THIS: Your actual address -->
-                        123 Coffee Street, Downtown Area<br>
-                        Olongapo City, Zambales 2200<br>
+                        21 Aurea, Mabalacat City, Pampanga, Philippines<br>
+                        Mabalacat City, Pampanga<br>
                         Philippines</p>
                         
                         <p><strong>Main Phone:</strong><br>
@@ -363,10 +363,10 @@ try {
                             ============================================
                             -->
                             <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d123522.42!2d120.2750!3d14.8870!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDUzJzEzLjIiTiAxMjDCsDE2JzMwLjAiRQ!5e0!3m2!1sen!2sph!4v1234567890"
-                                width="100%" 
-                                height="400" 
-                                style="border:0; border-radius: 15px;" 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d962.6692926283775!2d120.5856482696131!3d15.17606389342154!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396ed8f9b71be9d%3A0xeb897dfc68437e67!2s21%20Aurea%2C%20Mabalacat%20City%2C%20Pampanga%2C%20Philippines!5e0!3m2!1sen!2sus!4v1762588532142!5m2!1sen!2sus" 
+                                width="800" 
+                                height="600" 
+                                style="border:0; border-radius: 12px;" 
                                 allowfullscreen="" 
                                 loading="lazy" 
                                 referrerpolicy="no-referrer-when-downgrade">
