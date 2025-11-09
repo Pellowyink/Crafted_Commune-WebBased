@@ -83,7 +83,7 @@ include 'includes/header.php';
 <!-- Dashboard Content -->
 <div class="dashboard-header">
     <h1>📊 Dashboard Overview</h1>
-    <p style="center">Welcome back, <strong><?= e($_SESSION['admin_name']) ?></strong>!</p>
+    <p style="center">  Welcome back, <strong><?= e($_SESSION['admin_name']) ?></strong>!</p>
 </div>
 
 <?php if ($flash): ?>

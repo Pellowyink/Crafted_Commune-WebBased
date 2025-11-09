@@ -63,10 +63,10 @@ try {
     
     // Carousel images
     $carouselImages = [
-        'images/carousel/slide1.jpg',
-        'images/carousel/slide2.jpg',
-        'images/carousel/slide3.jpg',
-        'images/carousel/slide4.jpg'
+        '../images/carousel/slide2.jpg',
+        '../images/carousel/slide1.jpg',
+        '../images/carousel/slide3.jpg',
+        '../images/carousel/slide4.jpg'
     ];
     
     // Convert to JSON
@@ -85,8 +85,8 @@ try {
     <title>Crafted Commune Café</title>
     
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Cabin+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Stylesheet -->
@@ -123,26 +123,26 @@ try {
         </header>
 
         <section class="carousel-section">
-            <h2 class="section-title">Discover Our Story</h2>
+            <h2 class="section-title">Featured Products</h2>
             <div class="carousel-container">
                 <button class="carousel-btn prev" id="prevBtn">‹</button>
                 <div class="carousel-wrapper">
                     <div class="carousel-track" id="carouselTrack">
                         <div class="carousel-slide">
-                            <img src="../images/carousel/slide1.jpg" alt="Featured Product 1" onerror="this.src='https://via.placeholder.com/800x400/264d2a/ffffff?text=Product+1'">
+                            <img src="../images/carousel/slide1.jpg" alt="Featured Product 1">
                         </div>
                         <div class="carousel-slide">
-                            <img src="../images/carousel/slide2.jpg" alt="Featured Product 2" onerror="this.src='https://via.placeholder.com/800x400/3d5a3d/ffffff?text=Product+2'">
+                            <img src="../images/carousel/slide2.jpg" alt="Featured Product 2">
                         </div>
                         <div class="carousel-slide">
-                            <img src="../images/carousel/slide3.jpg" alt="Featured Product 3" onerror="this.src='https://via.placeholder.com/800x400/264d2a/ffffff?text=Product+3'">
+                            <img src="../images/carousel/slide3.jpg" alt="Featured Product 3">
                         </div>
                         <div class="carousel-slide">
-                            <img src="../images/carousel/slide4.jpg" alt="Featured Product 4" onerror="this.src='https://via.placeholder.com/800x400/3d5a3d/ffffff?text=Product+4'">
-                        </div>
+                            <img src="../images/carousel/slide4.jpg" alt="Featured Product 4">
+                            </div>
                     </div>
                 </div>
-                <button class="carousel-btn next" id="nextBtn">›</button>
+                    <button class="carousel-btn next" id="nextBtn">›</button>
             </div>
             <div class="carousel-dots" id="carouselDots"></div>
         </section>
@@ -178,11 +178,32 @@ try {
                 <?php 
                 $isFirst = true;
                 foreach($menuItems as $slug => $category): 
-                    $emojis = ['coffee' => '☕','non-coffee' => '🍵', 'latte' => '🧉','breakfast' => '🥞','lunch' => '🍚', 'soda' => '🥤', 'snacks' => '🍪'];
-                    $emoji = $emojis[$slug] ?? '📁';
                 ?>
                 <a href="#" class="menu-item <?php echo $isFirst ? 'active' : ''; ?>" data-category="<?php echo htmlspecialchars($slug); ?>">
-                    <div class="circle"><?php echo $emoji; ?></div>
+                    <div class="circle">
+                        <?php if (!empty($category['icon']) && file_exists($category['icon'])): ?>
+                            <!-- Show actual icon image from database -->
+                            <img src="<?php echo htmlspecialchars($category['icon']); ?>" 
+                                 alt="<?php echo htmlspecialchars($category['title']); ?>" 
+                                 class="category-icon-img"
+                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <!-- Fallback emoji if image fails -->
+                            <span class="category-emoji" style="display:none;">
+                                <?php 
+                                $emojis = ['coffee' => '☕', 'latte' => '🥛', 'soda' => '🥤', 'snacks' => '🍪'];
+                                echo $emojis[$slug] ?? '📁';
+                                ?>
+                            </span>
+                        <?php else: ?>
+                            <!-- Use emoji if no icon in database -->
+                            <span class="category-emoji">
+                                <?php 
+                                $emojis = ['coffee' => '☕', 'latte' => '🥛', 'soda' => '🥤', 'snacks' => '🍪'];
+                                echo $emojis[$slug] ?? '📁';
+                                ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
                     <span><?php echo htmlspecialchars($category['title']); ?></span>
                 </a>
                 <?php 
@@ -259,7 +280,16 @@ try {
                 </div>
                 
                 <div class="about-image">
-                    <img src="images/about/cafe-interior.jpg" alt="Café Interior" onerror="this.src='https://via.placeholder.com/500x600/264d2a/ffffff?text=Our+Café'">
+                    <img 
+                        src="" 
+                        alt="Café Interior" 
+                        
+                        onerror="this.src='';" 
+                        
+                        style="display: none !important;" 
+                        
+                        class="about-init-trigger-img" 
+                    >
                 </div>
             </div>
         </section>
@@ -497,7 +527,14 @@ try {
         });
     </script>
     
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
+    <script>
+    // Mark page as loaded
+    window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+        console.log('Page fully loaded');
+    });
+    </script>
 
 </body>
 </html>
