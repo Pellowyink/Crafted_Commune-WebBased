@@ -323,7 +323,7 @@ body {
    CONTAINER & LAYOUT (MENU PAGE)
    ======================================== */
 .container {
-    max-width: 1400px;
+    max-width: 1750px;
     margin: 0 auto;
     display: flex;
     gap: 2rem;
@@ -737,7 +737,7 @@ body {
 
 .pay-btn {
     width: 100%;
-    background: linear-gradient(135deg, #d84315 0%, #bf360c 100%);
+    background: linear-gradient(135deg, #273B08 0%, #4c6d1b 100%);
     color: #fff;
     border: none;
     padding: 0.95rem;
@@ -747,12 +747,12 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: 'Cabin Condensed', sans-serif;
-    box-shadow: 0 4px 12px rgba(216, 67, 21, 0.3);
+    box-shadow: 0 4px 12px rgba(16, 94, 29, 0.3);
 }
 
 .pay-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(216, 67, 21, 0.4);
+    box-shadow: 0 6px 18px rgba(57, 163, 75, 0.3);
 }
 
 .pay-btn:disabled {
@@ -875,7 +875,7 @@ body {
     background: linear-gradient(135deg, #3d4a2e 0%, #2d3a1e 100%);
     color: #fff;
     border: none;
-    padding: 0.95rem;
+    padding: 50px;
     border-radius: 14px;
     font-size: 1.1rem;
     font-weight: 700;
@@ -1386,4 +1386,394 @@ body {
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
+}
+
+/* ========================================
+   LOYALTY PROGRAM MODAL STYLES
+   Add these styles to your existing style.css
+   ======================================== */
+
+/* Modal Overlay */
+.loyalty-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+.loyalty-modal.show {
+    display: flex;
+}
+
+/* Modal Content */
+.loyalty-modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 2.5rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+.loyalty-modal-content h2 {
+    font-family: 'Calistoga', cursive;
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+/* Modal Sections */
+.modal-section {
+    margin-bottom: 1.5rem;
+}
+
+.modal-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Total Display */
+.total-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #273B08 0%, #2d4704 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.total-display span:first-child {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.amount-large {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Calistoga', cursive;
+}
+
+/* Change Display */
+.change-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #d4edda;
+    color: #155724;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    border: 2px solid #28a745;
+}
+
+.change-amount {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: 'Cabin Condensed', sans-serif;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.875rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: 'Cabin Condensed', sans-serif;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #273B08;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Error Messages */
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 0.875rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #f5c6cb;
+    font-size: 0.9rem;
+}
+
+/* Loyalty Question Section */
+.loyalty-question {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.question-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+/* Button Groups */
+.button-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+/* Button Styles */
+.btn-primary,
+.btn-secondary {
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Cabin Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #273B08 0%, #2d4704 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(35, 119, 42, 0.4);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: white;
+    color: #2c3e50;
+    border: 2px solid #e0e0e0;
+}
+
+.btn-secondary:hover {
+    background: #f8f9fa;
+    border-color: #ff8585;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+/* Back Button */
+.modal-back-btn {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    background: #f8f9fa;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.modal-back-btn:hover {
+    background: #e9ecef;
+}
+
+/* Benefits List */
+.benefits-list {
+    background: linear-gradient(135deg, #273B08 0%, #2d470415 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.benefits-list p {
+    margin: 0.75rem 0;
+    font-size: 1rem;
+    color: #f8f9fa;
+}
+
+/* Final Receipt Styles */
+.final-receipt .modal-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.receipt-details {
+    margin-bottom: 1.5rem;
+}
+
+.receipt-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 1rem;
+}
+
+.receipt-row:last-child {
+    border-bottom: none;
+}
+
+.receipt-row.highlight {
+    background: #d4edda;
+    padding: 1rem;
+    margin: 1rem -1rem 0;
+    border-radius: 8px;
+    border: 2px solid #28a745;
+}
+
+.receipt-row .value {
+    font-weight: bold;
+    font-family: 'Cabin Condensed', sans-serif;
+    font-size: 1.1rem;
+}
+
+/* Loyalty Info Card */
+.loyalty-card {
+    background: linear-gradient(135deg, #273B08 0%, #2d4704 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.loyalty-card h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+}
+
+.member-name {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.points-earned,
+.points-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    margin: 0.5rem 0;
+}
+
+.points-value {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Button Loader */
+.btn-loader {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .loyalty-modal-content {
+        width: 95%;
+        padding: 1.5rem;
+        max-height: 95vh;
+    }
+
+    .loyalty-modal-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .button-group {
+        grid-template-columns: 1fr;
+    }
+
+    .amount-large {
+        font-size: 1.5rem;
+    }
+
+    .modal-back-btn {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Hide scrollbar for webkit browsers */
+.loyalty-modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.loyalty-modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.loyalty-modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.loyalty-modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

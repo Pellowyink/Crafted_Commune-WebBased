@@ -279,18 +279,6 @@ try {
                     <p>Come experience the Crafted Commune difference. Whether you're here for your morning coffee, a midday snack, or an afternoon break, we're here to serve you with a smile.</p>
                 </div>
                 
-                <div class="about-image">
-                    <img 
-                        src="" 
-                        alt="Café Interior" 
-                        
-                        onerror="this.src='';" 
-                        
-                        style="display: none !important;" 
-                        
-                        class="about-init-trigger-img" 
-                    >
-                </div>
             </div>
         </section>
     </div>

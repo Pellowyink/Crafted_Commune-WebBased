@@ -263,3 +263,61 @@ CREATE INDEX idx_products_category_id ON products(category_id);
 CREATE INDEX idx_products_active ON products(is_active);
 CREATE INDEX idx_activity_log_admin_id ON activity_log(admin_id);
 CREATE INDEX idx_activity_log_created_at ON activity_log(created_at);
+
+-- ========================================
+-- Loyalty Members Table
+-- Add this to your database.sql or run separately
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS loyalty_members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    points INT DEFAULT 0,
+    total_purchases DECIMAL(10, 2) DEFAULT 0.00,
+    total_orders INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_purchase TIMESTAMP NULL,
+    is_active TINYINT(1) DEFAULT 1
+);
+
+-- Create index for faster email lookups
+CREATE INDEX idx_loyalty_email ON loyalty_members(email);
+
+-- Optional: Insert sample loyalty members for testing
+INSERT INTO loyalty_members (name, email, points, total_purchases, total_orders) VALUES
+('John Doe', 'john.doe@example.com', 150, 1500.00, 12),
+('Jane Smith', 'jane.smith@example.com', 250, 2500.00, 18),
+('Test Customer', 'test@test.com', 50, 500.00, 5);
+
+-- ========================================
+-- Loyalty Transactions Log (Optional but Recommended)
+-- Track point earning/redemption history
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS loyalty_transactions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    order_id INT,
+    transaction_type ENUM('earn', 'redeem', 'adjustment') DEFAULT 'earn',
+    points_change INT NOT NULL,
+    points_balance INT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (member_id) REFERENCES loyalty_members(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE SET NULL
+);
+
+CREATE INDEX idx_loyalty_trans_member ON loyalty_transactions(member_id);
+CREATE INDEX idx_loyalty_trans_order ON loyalty_transactions(order_id);
+
+ALTER TABLE loyalty_members 
+ADD COLUMN IF NOT EXISTS expiration_date DATE NULL 
+COMMENT 'Membership expiration date (NULL = no expiration)';
+
+-- Verify the column was added
+DESCRIBE loyalty_members;
+
+-- Optional: Update some test members with expiration dates
+-- UPDATE loyalty_members SET expiration_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR) WHERE id = 1;
+-- UPDATE loyalty_members SET expiration_date = DATE_SUB(CURDATE(), INTERVAL 1 MONTH) WHERE id = 2;
