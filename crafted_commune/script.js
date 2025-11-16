@@ -1,11 +1,6 @@
 /**
  * Crafted Commune Café - Complete JavaScript
- * Handles page navigation, carousel, category switching, order management, and points system
- */
-
-/**
- * Enhanced Crafted Commune Café JavaScript
- * With Multi-Step Loyalty Program Checkout
+ * WITH OUT-OF-STOCK SUPPORT + FULL LOYALTY SYSTEM
  */
 
 // ========================================
@@ -64,6 +59,7 @@ const nextBtn = document.getElementById('nextBtn');
 // INITIALIZATION
 // ========================================
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Page loaded - Initializing...');
     initCarousel();
     setupPageNavigation();
     loadCategory(currentCategory);
@@ -71,6 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setupReceiptListeners();
     showPage('home');
     createLoyaltyModals();
+    
+    // Contact form handler
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            contactForm.reset();
+        });
+    }
 });
 
 // ========================================
@@ -158,10 +164,14 @@ function setupCategoryButtons() {
 }
 
 function loadCategory(category) {
+    console.log(`📂 Loading category: ${category}`);
     currentCategory = category;
     const categoryData = menuData[category];
     
-    if (!categoryData) return;
+    if (!categoryData) {
+        console.error(`❌ Category not found: ${category}`);
+        return;
+    }
     
     if (categoryTitle) categoryTitle.textContent = categoryData.title;
     if (itemCount) itemCount.textContent = `${categoryData.products.length} items`;
@@ -176,24 +186,50 @@ function loadCategory(category) {
 }
 
 // ========================================
-// PRODUCT CARD CREATION
+// PRODUCT CARD CREATION - WITH OUT OF STOCK SUPPORT
 // ========================================
 function createProductCard(product) {
-    const card = document.createElement('div');
-    card.className = 'product-card';
+    console.log(`🔨 Creating card: ${product.name} | Stock: ${product.stock_status}`);
     
+    const card = document.createElement('div');
+    
+    // Check stock status from database
+    const isOutOfStock = product.stock_status === 'out_of_stock';
+    const isLowStock = product.stock_status === 'low_stock';
+    
+    // Set base class and stock classes
+    card.className = 'product-card';
+    if (isOutOfStock) card.classList.add('out-of-stock');
+    else if (isLowStock) card.classList.add('low-stock');
+    
+    // Build card HTML - FIXED: Remove duplicate ₱ and pts
     card.innerHTML = `
         ${product.recommended ? '<div class="recommendation-badge"></div>' : ''}
+        ${isOutOfStock ? '<div class="out-of-stock-overlay"><span>OUT OF STOCK</span></div>' : ''}
+        ${isLowStock && !isOutOfStock ? '<div class="low-stock-badge">⚠️ Low Stock</div>' : ''}
         <div class="product-image">
             <img src="${product.image}" alt="${product.name}" 
                  onerror="this.style.opacity='0.3'">
         </div>
         <div class="product-name">${product.name}</div>
-        <div class="product-price">${product.price}</div>
-        <div class="product-points">${product.points}</div>
+        <div class="product-price">₱${product.price}</div>
+        <div class="product-points">${product.points} </div>
     `;
     
-    card.addEventListener('click', () => addToOrder(product));
+    // Only allow clicking if in stock
+    if (!isOutOfStock) {
+        card.addEventListener('click', () => addToOrder(product));
+        card.style.cursor = 'pointer';
+    } else {
+        card.style.cursor = 'not-allowed';
+        card.title = '🚫 Out of stock - Cannot order';
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            alert('⚠️ Sorry! This item is currently out of stock.');
+        });
+    }
+    
     return card;
 }
 
@@ -287,7 +323,6 @@ function updateReceipt() {
     if (totalAmount) totalAmount.textContent = `₱${total}`;
     if (totalPoints) totalPoints.textContent = `${points} pts`;
     
-    // Store in checkout state
     checkoutState.totalAmount = total;
     checkoutState.totalPoints = points;
 }
@@ -463,7 +498,6 @@ function createLoyaltyModals() {
 function startCheckoutFlow() {
     if (orderItems.length === 0) return;
     
-    // Reset checkout state
     checkoutState = {
         totalAmount: orderItems.reduce((sum, item) => sum + (item.price * item.qty), 0),
         totalPoints: orderItems.reduce((sum, item) => sum + (item.points * item.qty), 0),
@@ -475,7 +509,6 @@ function startCheckoutFlow() {
         isLoyaltyMember: false
     };
     
-    // Show Step A: Payment Modal
     document.getElementById('modalTotalAmount').textContent = `₱${checkoutState.totalAmount}`;
     document.getElementById('cashReceived').value = '';
     document.getElementById('changeDisplay').style.display = 'none';
@@ -484,9 +517,7 @@ function startCheckoutFlow() {
 }
 
 function showModal(modalId) {
-    // Hide all modals
     document.querySelectorAll('.loyalty-modal').forEach(m => m.classList.remove('show'));
-    // Show target modal
     const modal = document.getElementById(modalId);
     if (modal) modal.classList.add('show');
 }
@@ -499,7 +530,6 @@ function hideAllModals() {
 // LOYALTY MODAL EVENT LISTENERS
 // ========================================
 function setupLoyaltyModalListeners() {
-    // Step A: Cash received calculation
     const cashInput = document.getElementById('cashReceived');
     cashInput.addEventListener('input', function() {
         const cash = parseFloat(this.value) || 0;
@@ -515,65 +545,31 @@ function setupLoyaltyModalListeners() {
         }
     });
     
-    // Step A: Yes Member button
     document.getElementById('btnYesMember').addEventListener('click', function() {
         if (!validateCashReceived()) return;
         showModal('memberLookupModal');
     });
     
-    // Step A: No Member button
     document.getElementById('btnNoMember').addEventListener('click', function() {
         if (!validateCashReceived()) return;
         showModal('newMemberOfferModal');
     });
     
-    // Step B: Find Member
     document.getElementById('btnFindMember').addEventListener('click', findLoyaltyMember);
+    document.getElementById('backFromLookup').addEventListener('click', () => showModal('paymentChangeModal'));
     
-    // Step B: Back button
-    document.getElementById('backFromLookup').addEventListener('click', function() {
-        showModal('paymentChangeModal');
-    });
+    document.getElementById('btnYesSignup').addEventListener('click', () => showModal('memberRegistrationModal'));
+    document.getElementById('btnNoSignup').addEventListener('click', completeOrderWithoutLoyalty);
+    document.getElementById('backFromOffer').addEventListener('click', () => showModal('paymentChangeModal'));
     
-    // Step C: Yes Signup
-    document.getElementById('btnYesSignup').addEventListener('click', function() {
-        showModal('memberRegistrationModal');
-    });
-    
-    // Step C: No Signup (skip to final)
-    document.getElementById('btnNoSignup').addEventListener('click', function() {
-        completeOrderWithoutLoyalty();
-    });
-    
-    // Step C: Back button
-    document.getElementById('backFromOffer').addEventListener('click', function() {
-        showModal('paymentChangeModal');
-    });
-    
-    // Step D: Register & Pay
     document.getElementById('btnRegisterPay').addEventListener('click', registerAndPay);
+    document.getElementById('backFromRegistration').addEventListener('click', () => showModal('newMemberOfferModal'));
     
-    // Step D: Back button
-    document.getElementById('backFromRegistration').addEventListener('click', function() {
-        showModal('newMemberOfferModal');
-    });
-    
-    // Step E: Continue Shopping
     document.getElementById('btnContinueShopping').addEventListener('click', function() {
         hideAllModals();
         orderItems = [];
         updateReceipt();
         closeReceiptPanel();
-    });
-    
-    // Close on outside click
-    document.querySelectorAll('.loyalty-modal').forEach(modal => {
-        modal.addEventListener('click', function(e) {
-            if (e.target === this) {
-                // Don't allow closing during checkout
-                // hideAllModals();
-            }
-        });
     });
 }
 
@@ -588,7 +584,6 @@ function validateCashReceived() {
         document.getElementById('paymentError').style.display = 'block';
         return false;
     }
-    
     return true;
 }
 
@@ -605,7 +600,6 @@ function findLoyaltyMember() {
         return;
     }
     
-    // Show loading
     btnText.style.display = 'none';
     btnLoader.style.display = 'inline';
     btn.disabled = true;
@@ -626,15 +620,12 @@ function findLoyaltyMember() {
         btn.disabled = false;
         
         if (data.success && data.found) {
-            // Member found - proceed to complete order
             checkoutState.memberId = data.member.id;
             checkoutState.memberEmail = data.member.email;
             checkoutState.memberName = data.member.name;
             checkoutState.isLoyaltyMember = true;
-            
             completeOrderWithLoyalty();
         } else {
-            // Member not found - offer signup
             errorDiv.textContent = 'Member not found. Would you like to sign them up?';
             errorDiv.style.display = 'block';
             setTimeout(() => showModal('newMemberOfferModal'), 2000);
@@ -663,7 +654,6 @@ function registerAndPay() {
         return;
     }
     
-    // Show loading
     btnText.style.display = 'none';
     btnLoader.style.display = 'inline';
     btn.disabled = true;
@@ -689,7 +679,6 @@ function registerAndPay() {
             checkoutState.memberEmail = data.member.email;
             checkoutState.memberName = data.member.name;
             checkoutState.isLoyaltyMember = true;
-            
             completeOrderWithLoyalty();
         } else {
             errorDiv.textContent = data.message;
@@ -774,3 +763,5 @@ function showFinalReceipt(data) {
     
     showModal('finalReceiptModal');
 }
+
+console.log('✅ Script.js loaded successfully!');

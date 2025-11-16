@@ -107,7 +107,7 @@ $products = $pdo->query("
     SELECT p.*, c.name as category_name 
     FROM products p 
     LEFT JOIN categories c ON p.category_id = c.id 
-    ORDER BY p.id DESC
+    ORDER BY p.id ASC
 ")->fetchAll();
 
 include 'includes/header.php';

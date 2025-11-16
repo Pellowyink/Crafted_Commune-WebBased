@@ -30,9 +30,9 @@ try {
     $menuItems = [];
     
     foreach ($dbCategories as $category) {
-        // Get ONLY ACTIVE products for this category
+        // Get ONLY ACTIVE products for this category WITH STOCK STATUS
         $productsStmt = $pdo->prepare("
-            SELECT id, name, price, points, image, is_recommended 
+            SELECT id, name, price, points, image, is_recommended, stock_status
             FROM products 
             WHERE category_id = ? AND is_active = 1 
             ORDER BY name
@@ -49,7 +49,8 @@ try {
                 'price' => (float)$product['price'],
                 'points' => (int)$product['points'],
                 'image' => $product['image'],
-                'recommended' => (bool)$product['is_recommended']
+                'recommended' => (bool)$product['is_recommended'],
+                'stock_status' => $product['stock_status'] ?? 'in_stock'
             ];
         }
         
@@ -515,14 +516,14 @@ try {
         });
     </script>
     
-    <script src="script.js" defer></script>
+    <script src="script.js?v=<?php echo time(); ?>" defer></script>
     <script>
     // Mark page as loaded
     window.addEventListener('load', function() {
         document.body.classList.add('loaded');
         console.log('Page fully loaded');
     });
-    </script>
+    </script>    
 
 </body>
 </html>

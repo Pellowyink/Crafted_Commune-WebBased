@@ -264,11 +264,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <a href="../index.php">← Back to Main Site</a>
         </div>
         
-        <div class="info-box">
+        <!-- <div class="info-box">
             <strong>🔐 Default Login Credentials:</strong>
             Username: <strong>admin</strong><br>
             Password: <strong>password</strong>
-        </div>
+        </div> -->
     </div>
 </body>
 </html>

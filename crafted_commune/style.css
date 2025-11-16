@@ -532,7 +532,7 @@ body {
 }
 
 .product-price::before {
-    content: '₱';
+    content: '';
 }
 
 .product-points {
@@ -1776,4 +1776,65 @@ body {
 
 .loyalty-modal-content::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+/* ========================================
+   INVENTORY - OUT OF STOCK STYLING
+   ======================================== */
+
+/* OUT OF STOCK STYLING */
+.product-card.out-of-stock {
+    opacity: 0.6;
+    filter: grayscale(100%);
+    cursor: not-allowed !important;
+    position: relative;
+}
+
+.product-card.out-of-stock:hover {
+    transform: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.out-of-stock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    border-radius: var(--border-radius);
+}
+
+.out-of-stock-overlay span {
+    background: #dc3545;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    transform: rotate(-12deg);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.low-stock-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ffc107;
+    color: #333;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    z-index: 15;
+}
+
+.product-card.low-stock {
+    border: 2px solid #ffc107;
 }

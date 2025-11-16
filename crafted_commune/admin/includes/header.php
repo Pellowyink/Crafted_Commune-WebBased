@@ -56,11 +56,16 @@
                 <span class="nav-icon">📈</span>
                 <span class="nav-text">Analytics</span>
             </a>
+
+             <a href="inventory.php" class="nav-link <?php echo ($currentPage == 'inventory.php') ? 'active' : ''; ?>">
+                <span class="nav-icon">📦</span>
+                <span>Inventory</span>
+            </a>
             
-            <a href="product_ratings.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'product_ratings.php' ? 'active' : '' ?>">
+            <!-- <a href="product_ratings.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'product_ratings.php' ? 'active' : '' ?>">
                 <span class="nav-icon">⭐</span>
                 <span class="nav-text">Product Ratings</span>
-            </a>            
+            </a> -->
             
             <a href="settings.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'settings.php' ? 'active' : '' ?>">
                 <span class="nav-icon">⚙️</span>
@@ -74,11 +79,6 @@
                 <span class="nav-text">View Website</span>
             </a>
 
-            <a href="rating_links.php" class="nav-link <?php echo ($currentPage == 'rating_links.php') ? 'active' : ''; ?>">
-                <span class="nav-icon">📧</span>
-                <span class="nav-text">Rating Links</span>
-            </a>
-            
             <a href="logout.php" class="nav-link nav-link-danger">
                 <span class="nav-icon">🚪</span>
                 <span class="nav-text">Logout</span>
