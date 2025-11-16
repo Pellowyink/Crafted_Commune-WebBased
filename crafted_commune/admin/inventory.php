@@ -76,7 +76,7 @@ include 'includes/header.php';
 <div class="page-header">
     <h1>📦 Product Inventory Management</h1>
     <a href="productadd_edit.php" class="btn btn-primary">➕ Add New Ingredient</a>
-    <a href="affected_products.php" class="btn btn-primary">→ Affected Products</a>
+    <a href="affected_products.php" class="btn btn-primary">→ Ingredients Manager</a>
 </div>
     
 
