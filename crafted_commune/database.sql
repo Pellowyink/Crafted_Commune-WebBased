@@ -211,6 +211,93 @@ CREATE TABLE IF NOT EXISTS activity_log (
 );
 
 -- ========================================
+-- 3. VIEWS FOR DASHBOARD (FIXED)
+-- ========================================
+
+CREATE OR REPLACE VIEW v_best_selling_products AS
+SELECT 
+    p.id,
+    p.name,
+    c.name as category,
+    COUNT(DISTINCT oi.order_id) as times_ordered,
+    COALESCE(SUM(oi.quantity), 0) as total_quantity_sold,
+    COALESCE(SUM(oi.subtotal), 0) as total_revenue,
+    p.price,
+    p.is_recommended
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN order_items oi ON p.id = oi.product_id
+LEFT JOIN orders o ON oi.order_id = o.id AND o.order_status = 'completed'
+GROUP BY p.id, p.name, c.name, p.price, p.is_recommended
+ORDER BY total_quantity_sold DESC;
+
+CREATE OR REPLACE VIEW v_daily_sales AS
+SELECT 
+    DATE(created_at) as sale_date,
+    COUNT(id) as total_orders,
+    COALESCE(SUM(total_amount), 0) as total_revenue,
+    COALESCE(SUM(total_points), 0) as total_points,
+    COALESCE(AVG(total_amount), 0) as average_order_value
+FROM orders
+WHERE order_status = 'completed'
+GROUP BY DATE(created_at)
+ORDER BY sale_date DESC;
+
+CREATE OR REPLACE VIEW v_category_performance AS
+SELECT 
+    c.id,
+    c.name as category_name,
+    COUNT(DISTINCT p.id) as product_count,
+    COUNT(DISTINCT oi.order_id) as times_ordered,
+    COALESCE(SUM(oi.quantity), 0) as total_items_sold,
+    COALESCE(SUM(oi.subtotal), 0) as total_revenue
+FROM categories c
+LEFT JOIN products p ON c.id = p.category_id
+LEFT JOIN order_items oi ON p.id = oi.product_id
+LEFT JOIN orders o ON oi.order_id = o.id AND o.order_status = 'completed'
+GROUP BY c.id, c.name
+ORDER BY total_revenue DESC;
+
+CREATE OR REPLACE VIEW v_product_rating_stats AS
+SELECT 
+    p.id as product_id,
+    p.name as product_name,
+    p.category_id,
+    c.name as category_name,
+    p.average_rating,
+    p.rating_count,
+    p.is_recommended,
+    COUNT(CASE WHEN pr.rating = 5 THEN 1 END) as five_star,
+    COUNT(CASE WHEN pr.rating = 4 THEN 1 END) as four_star,
+    COUNT(CASE WHEN pr.rating = 3 THEN 1 END) as three_star,
+    COUNT(CASE WHEN pr.rating = 2 THEN 1 END) as two_star,
+    COUNT(CASE WHEN pr.rating = 1 THEN 1 END) as one_star
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN product_ratings pr ON p.id = pr.product_id
+GROUP BY p.id, p.name, p.category_id, c.name, p.average_rating, p.rating_count, p.is_recommended;
+
+CREATE OR REPLACE VIEW v_product_stock_status AS
+SELECT 
+    p.id as product_id,
+    p.name as product_name,
+    p.price,
+    p.is_active,
+    p.stock_status,
+    COUNT(DISTINCT pi.ingredient_id) as total_ingredients,
+    SUM(CASE WHEN inv.stock < pi.quantity_needed THEN 1 ELSE 0 END) as out_of_stock_ingredients,
+    CASE 
+        WHEN SUM(CASE WHEN inv.stock < pi.quantity_needed THEN 1 ELSE 0 END) > 0 THEN 'out_of_stock'
+        WHEN SUM(CASE WHEN inv.stock < inv.low_stock_threshold THEN 1 ELSE 0 END) > 0 THEN 'low_stock'
+        ELSE 'in_stock'
+    END as calculated_status
+FROM products p
+LEFT JOIN product_ingredients pi ON p.id = pi.product_id
+LEFT JOIN product_inventory inv ON pi.ingredient_id = inv.id
+WHERE p.is_active = 1
+GROUP BY p.id, p.name, p.price, p.is_active, p.stock_status;
+
+-- ========================================
 -- 3. STORED PROCEDURES & TRIGGERS
 -- ========================================
 DELIMITER //
