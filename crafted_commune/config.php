@@ -186,4 +186,17 @@ function getFlashMessage() {
     }
     return null;
 }
+
+// ========================================
+// EMAIL SETTINGS (Gmail SMTP)
+// ========================================
+define('SMTP_HOST', 'smtp.gmail.com');
+define('SMTP_PORT', 587);
+define('SMTP_USERNAME', 'rodolfodavid3rd@gmail.com'); // ← YOUR GMAIL HERE
+define('SMTP_PASSWORD', 'ljnf egac dehp wfte');   // ← YOUR APP PASSWORD HERE
+define('SMTP_FROM_EMAIL', 'rodolfodavid3rd@gmail.com'); // ← SAME AS ABOVE
+define('SMTP_FROM_NAME', 'Crafted Commune Cafe');
+
+// Enable email sending (set to false to test without sending)
+define('ENABLE_EMAILS', true);
 ?>

@@ -57,6 +57,11 @@
                 <span class="nav-text">Analytics</span>
             </a>
             
+            <a href="product_ratings.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'product_ratings.php' ? 'active' : '' ?>">
+                <span class="nav-icon">⭐</span>
+                <span class="nav-text">Product Ratings</span>
+            </a>            
+            
             <a href="settings.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'settings.php' ? 'active' : '' ?>">
                 <span class="nav-icon">⚙️</span>
                 <span class="nav-text">Settings</span>
@@ -67,6 +72,11 @@
             <a href="../index.php" class="nav-link" target="_blank">
                 <span class="nav-icon">🌐</span>
                 <span class="nav-text">View Website</span>
+            </a>
+
+            <a href="rating_links.php" class="nav-link <?php echo ($currentPage == 'rating_links.php') ? 'active' : ''; ?>">
+                <span class="nav-icon">📧</span>
+                <span class="nav-text">Rating Links</span>
             </a>
             
             <a href="logout.php" class="nav-link nav-link-danger">

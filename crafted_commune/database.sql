@@ -284,11 +284,11 @@ CREATE TABLE IF NOT EXISTS loyalty_members (
 -- Create index for faster email lookups
 CREATE INDEX idx_loyalty_email ON loyalty_members(email);
 
--- Optional: Insert sample loyalty members for testing
-INSERT INTO loyalty_members (name, email, points, total_purchases, total_orders) VALUES
-('John Doe', 'john.doe@example.com', 150, 1500.00, 12),
-('Jane Smith', 'jane.smith@example.com', 250, 2500.00, 18),
-('Test Customer', 'test@test.com', 50, 500.00, 5);
+-- -- Optional: Insert sample loyalty members for testing
+-- --INSERT INTO loyalty_members (name, email, points, total_purchases, total_orders) VALUES
+-- ('John Doe', 'john.doe@example.com', 150, 1500.00, 12),
+-- ('Jane Smith', 'jane.smith@example.com', 250, 2500.00, 18),
+-- ('Test Customer', 'test@test.com', 50, 500.00, 5);
 
 -- ========================================
 -- Loyalty Transactions Log (Optional but Recommended)
@@ -321,3 +321,168 @@ DESCRIBE loyalty_members;
 -- Optional: Update some test members with expiration dates
 -- UPDATE loyalty_members SET expiration_date = DATE_ADD(CURDATE(), INTERVAL 1 YEAR) WHERE id = 1;
 -- UPDATE loyalty_members SET expiration_date = DATE_SUB(CURDATE(), INTERVAL 1 MONTH) WHERE id = 2;
+
+-- ========================================
+-- Product Rating System Database
+-- For rating individual products purchased
+-- ========================================
+
+-- Step 1: Add loyalty_member_id to orders (if not exists)
+ALTER TABLE orders 
+ADD COLUMN IF NOT EXISTS loyalty_member_id INT NULL 
+AFTER total_points;
+
+ALTER TABLE orders 
+ADD CONSTRAINT fk_orders_loyalty_member 
+FOREIGN KEY (loyalty_member_id) 
+REFERENCES loyalty_members(id) 
+ON DELETE SET NULL;
+
+-- Step 2: Create product_ratings table
+CREATE TABLE IF NOT EXISTS product_ratings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT NOT NULL,
+    member_id INT NOT NULL,
+    order_id INT NOT NULL,
+    order_item_id INT NOT NULL,
+    rating INT NOT NULL COMMENT '1-5 stars',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    FOREIGN KEY (member_id) REFERENCES loyalty_members(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_item_id) REFERENCES order_items(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_rating (member_id, order_item_id),
+    INDEX idx_product (product_id),
+    INDEX idx_member (member_id),
+    INDEX idx_rating (rating)
+) COMMENT='Individual product ratings from customers';
+
+-- Step 3: Create rating_links table (stores unique codes for each order)
+CREATE TABLE IF NOT EXISTS rating_links (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    unique_code VARCHAR(64) UNIQUE NOT NULL,
+    member_id INT NOT NULL,
+    order_id INT NOT NULL,
+    order_number VARCHAR(50) NOT NULL,
+    points_earned INT NOT NULL,
+    total_points INT NOT NULL,
+    status ENUM('pending', 'completed', 'expired') DEFAULT 'pending',
+    email_sent TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP NULL,
+    expires_at TIMESTAMP NULL,
+    FOREIGN KEY (member_id) REFERENCES loyalty_members(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    INDEX idx_unique_code (unique_code),
+    INDEX idx_status (status),
+    INDEX idx_member (member_id)
+) COMMENT='Unique rating links sent to customers';
+
+-- Step 4: Add average_rating to products table
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS average_rating DECIMAL(3,2) DEFAULT 0.00 
+AFTER points;
+
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS rating_count INT DEFAULT 0 
+AFTER average_rating;
+
+-- Step 5: Create view for product rating statistics
+CREATE OR REPLACE VIEW v_product_rating_stats AS
+SELECT 
+    p.id as product_id,
+    p.name as product_name,
+    p.category_id,
+    c.name as category_name,
+    p.average_rating,
+    p.rating_count,
+    p.is_recommended,
+    COUNT(CASE WHEN pr.rating = 5 THEN 1 END) as five_star,
+    COUNT(CASE WHEN pr.rating = 4 THEN 1 END) as four_star,
+    COUNT(CASE WHEN pr.rating = 3 THEN 1 END) as three_star,
+    COUNT(CASE WHEN pr.rating = 2 THEN 1 END) as two_star,
+    COUNT(CASE WHEN pr.rating = 1 THEN 1 END) as one_star
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.id
+LEFT JOIN product_ratings pr ON p.id = pr.product_id
+GROUP BY p.id, p.name, p.category_id, c.name, p.average_rating, p.rating_count, p.is_recommended;
+
+-- Step 6: Create stored procedure to update product ratings
+DELIMITER //
+
+CREATE PROCEDURE IF NOT EXISTS update_product_rating(IN prod_id INT)
+BEGIN
+    DECLARE avg_rating DECIMAL(3,2);
+    DECLARE rating_cnt INT;
+    
+    -- Calculate average rating and count
+    SELECT 
+        COALESCE(AVG(rating), 0),
+        COUNT(*)
+    INTO avg_rating, rating_cnt
+    FROM product_ratings
+    WHERE product_id = prod_id;
+    
+    -- Update product table
+    UPDATE products
+    SET average_rating = avg_rating,
+        rating_count = rating_cnt,
+        is_recommended = IF(avg_rating >= 4.0 AND rating_cnt >= 5, 1, is_recommended)
+    WHERE id = prod_id;
+END //
+
+DELIMITER ;
+
+-- Step 7: Create trigger to auto-update ratings when new rating added
+DELIMITER //
+
+CREATE TRIGGER IF NOT EXISTS after_product_rating_insert
+AFTER INSERT ON product_ratings
+FOR EACH ROW
+BEGIN
+    CALL update_product_rating(NEW.product_id);
+END //
+
+CREATE TRIGGER IF NOT EXISTS after_product_rating_update
+AFTER UPDATE ON product_ratings
+FOR EACH ROW
+BEGIN
+    CALL update_product_rating(NEW.product_id);
+END //
+
+CREATE TRIGGER IF NOT EXISTS after_product_rating_delete
+AFTER DELETE ON product_ratings
+FOR EACH ROW
+BEGIN
+    CALL update_product_rating(OLD.product_id);
+END //
+
+DELIMITER ;
+
+-- Verify tables created
+SELECT 'product_ratings' as table_name, COUNT(*) as row_count FROM product_ratings
+UNION ALL
+SELECT 'rating_links', COUNT(*) FROM rating_links;
+
+-- ========================================
+-- Milestone Achievements
+-- Tracks when a member hits a points milestone
+-- ========================================
+
+CREATE TABLE IF NOT EXISTS milestone_achievements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    milestone_type VARCHAR(50) NOT NULL,
+    milestone_value INT NOT NULL,
+    notified TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Ensure a member can only achieve a specific milestone once
+    UNIQUE KEY unique_milestone (member_id, milestone_type, milestone_value),
+
+    -- Foreign Key to the loyalty_members table
+    FOREIGN KEY (member_id) REFERENCES loyalty_members(id) ON DELETE CASCADE
+);
+
+-- Add indexes for faster lookup
+CREATE INDEX idx_milestone_member_id ON milestone_achievements(member_id);
