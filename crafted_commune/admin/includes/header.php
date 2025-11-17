@@ -52,6 +52,11 @@
                 <?php endif; ?>
             </a>
             
+            <a href="sales_cutoff.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'sales_cutoff.php' ? 'active' : '' ?>">
+                <span class="nav-icon">💰</span>
+                <span class="nav-text">Sales Cutoff</span>
+            </a>
+            
             <a href="analytics.php" class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'analytics.php' ? 'active' : '' ?>">
                 <span class="nav-icon">📈</span>
                 <span class="nav-text">Analytics</span>

@@ -822,3 +822,59 @@ LEFT JOIN product_ingredients pi ON p.id = pi.product_id
 LEFT JOIN product_inventory inv ON pi.ingredient_id = inv.id
 WHERE p.name IN ('Lunch Bowl', 'Nachos', 'Fries', 'Caffe Latte')
 GROUP BY p.id, p.name, p.stock_status;
+
+-- =======================================================
+-- SALES CUTOFF SYSTEM - DATABASE TABLES
+-- Add these tables to your existing database
+-- =======================================================
+
+USE crafted_commune;
+
+-- Sales Cutoffs Table
+CREATE TABLE IF NOT EXISTS sales_cutoffs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cutoff_date DATE NOT NULL,
+    cutoff_time TIME NOT NULL,
+    total_orders INT NOT NULL DEFAULT 0,
+    total_sales DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    total_points INT NOT NULL DEFAULT 0,
+    notes TEXT,
+    created_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES admin_users(id) ON DELETE SET NULL,
+    INDEX idx_cutoff_date (cutoff_date),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Cutoff Orders Junction Table
+CREATE TABLE IF NOT EXISTS cutoff_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    cutoff_id INT NOT NULL,
+    order_id INT NOT NULL,
+    cutoff_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cutoff_id) REFERENCES sales_cutoffs(id) ON DELETE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_order_cutoff (order_id, cutoff_id),
+    INDEX idx_cutoff_id (cutoff_id),
+    INDEX idx_order_id (order_id),
+    INDEX idx_cutoff_date (cutoff_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =======================================================
+-- VERIFICATION QUERIES
+-- =======================================================
+
+-- Check if tables were created successfully
+SHOW TABLES LIKE '%cutoff%';
+
+-- Verify table structure
+DESCRIBE sales_cutoffs;
+DESCRIBE cutoff_orders;
+
+-- Test query to see if everything works
+SELECT 
+    'Cutoff System Tables Created Successfully!' as Status,
+    COUNT(*) as ExistingCutoffs
+FROM sales_cutoffs;
